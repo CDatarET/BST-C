@@ -125,7 +125,6 @@ void dispLevel(struct TreeNode* root){
     r = insertQ(root, Q, r);
 
     while (!isEmpty(f, r)) {
-        //int old_f = f;
         f = deleteQ(Q, f);
         struct TreeNode* node = Q[f];
 
@@ -138,6 +137,35 @@ void dispLevel(struct TreeNode* root){
     }
 }
 
+void copyTree(struct TreeNode* root, struct TreeNode* copy){
+    if(root == NULL){
+        return;
+    }
+    
+    strcpy(copy->word, root->word);
+    strcpy(copy->meaning, root->meaning);
+    if(root->left != NULL){
+        struct TreeNode* t;
+        t = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+        t->left = NULL;
+        t->right = NULL;
+        
+        copy->left = t;
+    }
+    
+    if(root->right != NULL){
+        struct TreeNode* t;
+        t = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+        t->left = NULL;
+        t->right = NULL;
+        
+        copy->right = t;
+    }
+    
+    copyTree(root->left, copy->left);
+    copyTree(root->right, copy->right);
+}
+
 int main() {
     struct TreeNode* root;
     root = (struct TreeNode*)malloc(sizeof(struct TreeNode));
@@ -145,6 +173,11 @@ int main() {
     root->right = NULL;
     init(root);
 
+    struct TreeNode* copy;
+    copy = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    copy->left = NULL;
+    copy->right = NULL;
+    
     char yn = 'y';
 
     while (yn == 'y') {
@@ -167,6 +200,14 @@ int main() {
 
             case 4:
                 dispLevel(root);
+                break;
+            
+            case 5:
+                copyTree(root, copy);
+                printf("original tree-\n");
+                inorder(root);
+                printf("copied tree-\n");
+                inorder(copy);
                 break;
                 
             case 7:
