@@ -28,7 +28,7 @@ void inorder(struct TreeNode* root){
     }
 
     inorder(root->left);
-    printf("Word: %s Meaning: %s\n", root->word, root->meaning);
+    printf("Word: %s, Meaning: %s\n", root->word, root->meaning);
     inorder(root->right);
 }
 
@@ -137,46 +137,45 @@ void dispLevel(struct TreeNode* root){
     }
 }
 
-void copyTree(struct TreeNode* root, struct TreeNode* copy){
-    if(root == NULL){
-        return;
-    }
-    
+struct TreeNode* copyTree(struct TreeNode* root) {
+    struct TreeNode* copy = (struct TreeNode*) malloc(sizeof(struct TreeNode));
     strcpy(copy->word, root->word);
     strcpy(copy->meaning, root->meaning);
-    if(root->left != NULL){
-        struct TreeNode* t;
-        t = (struct TreeNode*)malloc(sizeof(struct TreeNode));
-        t->left = NULL;
-        t->right = NULL;
-        
-        copy->left = t;
+
+    copy->left = copyTree(root->left);
+    copy->right = copyTree(root->right);
+
+    return copy;
+}
+
+struct TreeNode* search(struct TreeNode* root, char word[]){
+    if(root == NULL){
+        return(NULL);
     }
-    
-    if(root->right != NULL){
-        struct TreeNode* t;
-        t = (struct TreeNode*)malloc(sizeof(struct TreeNode));
-        t->left = NULL;
-        t->right = NULL;
-        
-        copy->right = t;
+
+    int cmp = strcmp(word, root->word);
+    printf("visiting %s\n", root->word);
+
+    if(cmp < 0){
+        return(search(root->left, word));
     }
-    
-    copyTree(root->left, copy->left);
-    copyTree(root->right, copy->right);
+
+    if(cmp > 0){
+        return(search(root->right, word));
+    }
+
+    if(cmp == 0){
+        return(root);
+    }
 }
 
 int main() {
-    struct TreeNode* root;
-    root = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    struct TreeNode* root = (struct TreeNode*)malloc(sizeof(struct TreeNode));
     root->left = NULL;
     root->right = NULL;
     init(root);
 
     struct TreeNode* copy;
-    copy = (struct TreeNode*)malloc(sizeof(struct TreeNode));
-    copy->left = NULL;
-    copy->right = NULL;
     
     char yn = 'y';
 
@@ -203,13 +202,27 @@ int main() {
                 break;
             
             case 5:
-                copyTree(root, copy);
+                copy = copyTree(root);
                 printf("original tree-\n");
                 inorder(root);
                 printf("copied tree-\n");
                 inorder(copy);
                 break;
                 
+            case 6:
+                char word[20];
+                printf("Enter word to search: ");
+                scanf("%s", word);
+                struct TreeNode* found = search(root, word);
+                if(found == NULL){
+                    printf("word does not exist\n");
+                }
+                else{
+                    printf("found Word: %s, Meaning: %s", found->word, found->meaning);
+                }
+
+                break;
+
             case 7:
                 inorder(root);
                 break;
