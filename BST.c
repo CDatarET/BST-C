@@ -138,6 +138,10 @@ void dispLevel(struct TreeNode* root){
 }
 
 struct TreeNode* copyTree(struct TreeNode* root) {
+    if(root == NULL){
+        return(NULL);
+    }
+    
     struct TreeNode* copy = (struct TreeNode*) malloc(sizeof(struct TreeNode));
     strcpy(copy->word, root->word);
     strcpy(copy->meaning, root->meaning);
@@ -169,6 +173,21 @@ struct TreeNode* search(struct TreeNode* root, char word[]){
     }
 }
 
+struct TreeNode* mirror(struct TreeNode* root){
+    if(root == NULL){
+        return NULL;
+    }
+    
+    struct TreeNode* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+    
+    mirror(root->left);
+    mirror(root->right);
+    
+    return(root);
+}
+
 int main() {
     struct TreeNode* root = (struct TreeNode*)malloc(sizeof(struct TreeNode));
     root->left = NULL;
@@ -195,6 +214,13 @@ int main() {
         switch (choice) {
             case 1:
                 insert(root);
+                break;
+            
+            case 3:
+                printf("original tree-\n");
+                inorder(root);
+                printf("mirrored tree-\n");
+                inorder(mirror(copyTree(root)));
                 break;
 
             case 4:
