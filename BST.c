@@ -188,6 +188,53 @@ struct TreeNode* mirror(struct TreeNode* root){
     return(root);
 }
 
+struct TreeNode* findMin(struct TreeNode* node) {
+    while (node->left != NULL) {
+        node = node->left;
+    }
+    return node;
+}
+
+struct TreeNode* deleteNode(struct TreeNode* root, char word[]) {
+    if (root == NULL) {
+        return NULL;
+    }
+
+    int cmp = strcmp(word, root->word);
+
+    if (cmp < 0) {
+        root->left = deleteNode(root->left, word);
+    } 
+    else if (cmp > 0) {
+        root->right = deleteNode(root->right, word);
+    } 
+    else {
+        printf("deleted word %s with meaning %s\n", root->word, root->meaning);
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+            return NULL;
+        } 
+        else if (root->left == NULL) {
+            struct TreeNode* temp = root->right;
+            free(root);
+            return temp;
+        } 
+        else if (root->right == NULL) {
+            struct TreeNode* temp = root->left;
+            free(root);
+            return temp;
+        } 
+        else {
+            struct TreeNode* minNode = findMin(root->right);
+            strcpy(root->word, minNode->word);
+            strcpy(root->meaning, minNode->meaning);
+            root->right = deleteNode(root->right, minNode->word);
+        }
+    }
+
+    return root;
+}
+
 int main() {
     struct TreeNode* root = (struct TreeNode*)malloc(sizeof(struct TreeNode));
     root->left = NULL;
@@ -214,6 +261,14 @@ int main() {
         switch (choice) {
             case 1:
                 insert(root);
+                break;
+            case 2:
+                char del[10];
+                printf("Enter word to delete: ");
+                scanf("%s", del);
+                root = deleteNode(root, del);
+                printf("Inorder traversal after deletion:\n");
+                inorder(root);
                 break;
             
             case 3:
